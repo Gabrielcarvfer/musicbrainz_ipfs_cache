@@ -2,7 +2,7 @@ from flask import Flask, request
 import requests
 import hashlib
 
-app = Flask("MusicBrainz IPFS Cache Client")
+app = Flask("MusicBrainz IPFS Gateway Cache Client")
 app_port = 81
 
 mb_address = "localhost"  # Change this the real IPFS cache server ip+port
@@ -10,7 +10,7 @@ mb_port = "80"
 mb_request_path = "http://"+mb_address+":"+mb_port
 
 ipfsGateway = "https://cloudflare-ipfs.com/ipfs/"
-ipfsServerHash = "Qmb2rTLtEg7sg4YkX1z46UgKALcDYHt1WJHMohgFgPsTZg"  # Change this the real IPFS cache server folder hash
+ipfsServerHash = "QmTVbx4D4s9HYhX2edW6YM1Z5EqFe8cLUsZE8z1P7qqqWD"  # Change this the real IPFS cache server folder hash
 ipfsClient = None
 
 
