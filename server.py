@@ -85,9 +85,18 @@ if __name__ == '__main__':
     ipfsClient = ipfshttpclient.connect("/ip4/127.0.0.1/tcp/5001")
 
     # Recursively add IPFS folder
-    ipfsFolderHash = ipfsClient.add(cache_directory_path, recursive=True)
+    ipfsFileHashes = ipfsClient.add(cache_directory_path, recursive=True)
+    ipfsFolderHash = ipfsFileHashes[-1]["Hash"]
+    print("IPFS cache folder hash: %s (e.g. https://cloudflare-ipfs.com/ipfs/%s)" % (ipfsFolderHash,
+                                                                                     ipfsFolderHash))
 
-    print("IPFS cache folder hash: %s (e.g. https://cloudflare-ipfs.com/ipfs/%s)" % (ipfsFolderHash[-1]["Hash"],
-                                                                                     ipfsFolderHash[-1]["Hash"]))
+    # Setup IPNS to use the Peer ID instead of the ipfsFolderHash
+    try:
+        ipfsClient.name.publish("/ipfs/"+ipfsFolderHash)
+        print("IPFS peer ID: %s (e.g. https://cloudflare-ipfs.com/ipfs/%s)" % (ipfsClient.id().get("ID"),
+                                                                               ipfsClient.id().get("ID")))
+    except Exception:
+        print("Publishing folder hash to be resolved with the peer ID failed")
+
     # Start cache server
     app.run(port=app_port)

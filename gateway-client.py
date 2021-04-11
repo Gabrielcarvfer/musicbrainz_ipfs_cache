@@ -10,7 +10,8 @@ mb_port = "80"
 mb_request_path = "http://"+mb_address+":"+mb_port
 
 ipfsGateway = "https://cloudflare-ipfs.com/ipfs/"
-ipfsServerHash = "QmTVbx4D4s9HYhX2edW6YM1Z5EqFe8cLUsZE8z1P7qqqWD"  # Change this the real IPFS cache server folder hash
+# Change this the real IPFS cache server folder hash (IPNS resolution doesn't seem to work through the gateway)
+ipfsServerHash = "QmTVbx4D4s9HYhX2edW6YM1Z5EqFe8cLUsZE8z1P7qqqWD"
 ipfsClient = None
 
 

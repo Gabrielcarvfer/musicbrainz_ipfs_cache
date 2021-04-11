@@ -10,7 +10,9 @@ mb_port = "80"
 mb_request_path = "http://"+mb_address+":"+mb_port
 
 ipfsGateway = "https://cloudflare-ipfs.com/ipfs/"
-ipfsServerHash = "QmTVbx4D4s9HYhX2edW6YM1Z5EqFe8cLUsZE8z1P7qqqWD"  # Change this the real IPFS cache server folder hash
+ipfsServerPeerId = "12D3KooWCrhd7hrEx9aW8jXB5ZJaiJZZTEeyDquKK8jNPvugKrru"
+# IPFS cache server folder hash will be resolved with IPNS pointing to the Peer ID
+ipfsServerHash = "QmTVbx4D4s9HYhX2edW6YM1Z5EqFe8cLUsZE8z1P7qqqWD"
 ipfsClient = None
 
 
@@ -44,9 +46,8 @@ def cacheable_requests(req):
         # if it doesn't, forward the request to the MusicBrainz IPFS Cache server
         mb_response = requests.get(mb_request_path+req_path)
 
-        # if it answers positively, try to pin the response to share amonst other peers
+        # if it answers positively, try to pin the response to share amongst other peers
         if mb_response.status_code == 200:
-            # try to pin the result to help share it with other peers
             try:
                 ipfsClient.pin.add(cached_filename)
             except Exception:
@@ -77,6 +78,14 @@ if __name__ == '__main__':
     import ipfshttpclient
 
     ipfsClient = ipfshttpclient.connect("/ip4/127.0.0.1/tcp/5001")
+
+    try:
+        # Resolve IPFS server hash with IPNS
+        ipnsServerHash = ipfsClient.name.resolve(ipfsServerPeerId)
+        ipnsServerHash = ipfsServerHash.get("Path").split('/')[-1]
+        ipfsServerHash = ipnsServerHash
+    except Exception:
+        print("Failed to resolve IPFS server hash. Falling back to IPFS folder hash.")
 
     # Start cache server
     app.run(port=app_port)
