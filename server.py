@@ -5,7 +5,8 @@ import os
 from threading import Lock
 import time
 
-app = Flask("MusicBrainz IPFS Cache")
+app = Flask("MusicBrainz IPFS Cache Server")
+app_port = 80
 
 cache_directory_path = "ipfs"
 mb_address = "musicbrainz.org"
@@ -89,4 +90,4 @@ if __name__ == '__main__':
     print("IPFS cache folder hash: %s (e.g. https://cloudflare-ipfs.com/ipfs/%s)" % (ipfsFolderHash[-1]["Hash"],
                                                                                      ipfsFolderHash[-1]["Hash"]))
     # Start cache server
-    app.run(port=80)
+    app.run(port=app_port)
