@@ -14,6 +14,8 @@ mb_request_path = "https://"+mb_address+":"+mb_port
 mb_rate_limiter_lock = Lock()
 mb_rate = 1  # requests per second
 
+ipfsClient = None
+
 
 def sha1(content):
     sha_calc = hashlib.sha1()
@@ -45,6 +47,7 @@ def cacheable_requests(req):
         if mb_response.status_code == 200:
             with open(cached_filename, "wb") as file:
                 file.write(mb_response.content)
+                ipfsClient.add(cached_filename)
         return mb_response.content, mb_response.status_code
 
 
@@ -72,6 +75,18 @@ def non_cacheable_requests(req_path):
 
 
 if __name__ == '__main__':
+    # Create cache folder
     if not os.path.exists(cache_directory_path):
         os.mkdir(cache_directory_path)
+
+    # Create IFPS client to talk with deamon
+    import ipfshttpclient
+    ipfsClient = ipfshttpclient.connect("/ip4/127.0.0.1/tcp/5001")
+
+    # Recursively add IPFS folder
+    ipfsFolderHash = ipfsClient.add(cache_directory_path, recursive=True)
+
+    print("IPFS cache folder hash: %s (e.g. https://cloudflare-ipfs.com/ipfs/%s)" % (ipfsFolderHash[-1]["Hash"],
+                                                                                     ipfsFolderHash[-1]["Hash"]))
+    # Start cache server
     app.run(port=80)
